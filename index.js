@@ -17,14 +17,20 @@ app.get('/', (req, res) => {
 
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gweohfd.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
 const run = async () => {
     try {
+        const serviceCollection = client.db("dreamViewDB").collection("servicesData");
+        app.get('/service',async(req,res) =>{
+            const query= {}
+            const cursor =serviceCollection.find(query).limit(3);
+            const service = await cursor.toArray();
+            res.send(service);
+        })
 
-  const collection = client.db("dreamViewDB").collection("servicesData");
+
 
 
 }
