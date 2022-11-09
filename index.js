@@ -23,6 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const run = async () => {
     try {
         const serviceCollection = client.db("dreamViewDB").collection("servicesData");
+        const reviewCollection = client.db("dreamViewDB").collection("review");
         app.get('/service',async(req,res) =>{
             const query= {}
             const cursor =serviceCollection.find(query).limit(3);
@@ -41,6 +42,12 @@ const run = async () => {
             const id = req.params.id;
             const query= {_id:ObjectId(id)};
             const result = await serviceCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.post('/review', async(req,res)=>{
+            const review =req.body;
+            const result =await reviewCollection.insertOne(review);
             res.send(result);
         })
 
