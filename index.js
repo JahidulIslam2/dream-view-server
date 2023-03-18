@@ -24,6 +24,8 @@ const run = async () => {
     try {
         const serviceCollection = client.db("dreamViewDB").collection("servicesData");
         const reviewCollection = client.db("dreamViewDB").collection("review");
+
+
         app.get('/service', async (req, res) => {
             const query = {}
             const cursor = serviceCollection.find(query).limit(3);
@@ -51,6 +53,20 @@ const run = async () => {
             res.send(result);
         })
 
+        app.patch('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const newRating = req.body.newRating;
+            const filter = { _id: ObjectId(id) }
+            const updateRating = {
+                $set: {
+                    newRating: newRating
+                }
+            }
+            const result = serviceCollection.updateOne(filter, updateRating)
+            console.log(filter, updateRating)
+            res.send(result)
+        })
+
         app.post('/review', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
@@ -73,11 +89,11 @@ const run = async () => {
         })
 
 
-        app.get('/myreview', async(req, res) => {
+        app.get('/myreview', async (req, res) => {
             let query = {}
-            if(req.query.email){
+            if (req.query.email) {
                 query = {
-                     email: req.query.email 
+                    email: req.query.email
                 }
             }
             const cursor = reviewCollection.find(query);
@@ -88,16 +104,16 @@ const run = async () => {
 
         app.patch('/review/:id', async (req, res) => {
             const id = req.params.id;
-            const info=req.body.info;
+            const info = req.body.info;
             const query = { _id: ObjectId(id) };
             const update = {
-                $set:{ 
+                $set: {
                     info: info
                 }
-            
-        }
-    const result = await reviewCollection.updateOne(query,update)
-    res.send(result)   
+
+            }
+            const result = await reviewCollection.updateOne(query, update)
+            res.send(result)
         })
 
 
